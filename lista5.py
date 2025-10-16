@@ -143,5 +143,25 @@ if __name__ == '__main__':
         return c, cmin, cmax
     print(contar(m1, ground = "X"))
 #Questão4
-
+if __name__ == '__main__':
+    random.seed(10012)
+    m1 = generateMap(50, 10, 0.2, '-', 'X')
+    print_map(m1)
+    m2 = generateMap(100, 120)
+    save_map(m2, 'test_map.txt')
+    def lago(map, ground = 1):
+        visitadas = set()
+        for a in range(1, len(map)-1):
+            for b in range(1, len(map[0])-1):
+                if map[a][b] != ground:
+                    if (a, b) not in visitadas:
+                        visitadas.add((a, b))
+                        visitadas.add((a-1, b))
+                        visitadas.add((a, b-1))
+                        visitadas.add((a, b+1))
+                        visitadas.add((a+1, b))
+                        if map[a-1][b] == ground and map[a][b-1] == ground and map[a][b+1] == ground and map[a+1][b] == ground:
+                            return True
+        return False
+    print(lago(m1, ground = "X"))
 #Questão5
