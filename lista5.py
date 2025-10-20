@@ -165,3 +165,94 @@ if __name__ == '__main__':
         return False
     print(lago(m1, ground = "X"))
 #Questão5
+import numpy
+#numpy.array(object, dtype=None, *, copy=True, order='K', subok=False, ndmin=0, like=None)
+class ToroArray(numpy.array):
+    """
+    Uma subclasse customizada de numpy.array representa um toro unidimensional.
+    
+    Isso significa que qualquer valor inteiro pode ser usado como indice,
+    e a classe retorna o valor da sua posicao depois de calcular o modulo
+    do tamanho do array. Isso permite que o array se comporte como um circulo,
+    onde os indices negativos ou valores que ultrapassem o tamanho do array sao tratados
+    de forma apropriada.
+      
+    Metodos:
+        __new__(cls, input_array):
+            Cria um novo toro de um array.
+        
+        __init__(self, inputArray):
+            Inicializa o objeto calculando e guardando o modulo.
+    """
+
+    def __new__(cls, input_array):
+        """
+        Cria um novo toro de um array.
+        
+        Parametros:
+            input_array (array-like): Array a ser convertido.
+        
+        Retorna:
+            ToroArray: O toro criado pelo array.
+        """
+        obj = numpy.asarray(input_array).view(cls)  # Convert the input array and create a view as this class
+        return obj
+
+    def __init__(self):
+        """
+        Inicializa o objeto calculando e guardando o modulo.
+        
+        Parametros:
+            input_array (array-like): Array a ser convertido.
+        """
+        self.mod = numpy.prod(self.shape)  # Calculate and store the product of dimensions of the array
+
+    def getDim(self):
+        """
+        Retrieves the calculated dimension of the array.
+        
+        Returns:
+            int: The calculated dimension of the array.
+        """
+        return self.dim
+
+    def __mul__(self, w):
+        """
+        Overrides the multiplication behavior for CustomArray instances.
+        
+        If w is a numpy array or CustomArray, this method checks if their shapes match.
+        If shapes match, element-wise multiplication is performed. If shapes do not match,
+        the input array w is adjusted to match the shape of this CustomArray, and then
+        element-wise multiplication is performed. If w is not a numpy array or CustomArray,
+        regular multiplication is performed.
+        
+        Parameters:
+            w (array-like): Input array or value to be multiplied with this CustomArray.
+        
+        Returns:
+            array-like: Result of element-wise multiplication or regular multiplication.
+        """
+        if type(w) in [numpy.ndarray, ToroArray]:  # Check if w is a numpy array or an instance of CustomArray
+            if self.shape == w.shape:  # Check if the shapes of the arrays match
+                return super().__mul__(w)  # If shapes match, perform element-wise multiplication
+            else:
+                tw = w.flatten()  # Flatten the input array w
+                if len(tw) < self.dim:  # If flattened array length is less than stored dimension
+                    ft = numpy.ones(self.dim)  # Create an array of ones with length equal to stored dimension
+                    ft[:len(tw)] = tw  # Copy values from flattened array to the front
+                    tw = ft
+                else:
+                    tw = tw[:self.dim]  # If flattened array length is greater, trim it
+                tw = tw.reshape(self.shape)  # Reshape tw to match the shape of the CustomArray
+                return super().__mul__(tw)  # Perform element-wise multiplication
+        return super().__mul__(w)  # If w is not a numpy array or CustomArray, perform regular multiplication
+#tr = ToroArray([10, 11, 12, 13, 14])
+#print(tr[6])
+#print(tr[-20])
+#11
+#10
+# Criando uma instância da classe personalizada
+v = ToroArray([[ 1, 2, 4], [2, 3, 4]])
+print(v.dim)
+print(v.shape)
+print(v*numpy.array([[3,2],[10,100]]))
