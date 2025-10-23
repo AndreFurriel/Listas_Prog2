@@ -1,4 +1,5 @@
 #Questão1
+import csv
 from functools import reduce
 class Aluno():
     def __init__(self,nome,notas):
@@ -29,16 +30,32 @@ class Aluno():
         return self.media() >= 6
     def __repr__(self):
         return f"Aluno(nome={self.nome}, media={self.media():.1f}, aprovado={self.aprovado()})"
-alunos = [Aluno("Ana", [8, 7, 9, 3, 8, 5]),Aluno("Bruno", [0, 6, 4, 4, 5, 6]),Aluno("Carla", [10, 9, 8, 7, 9, 0])]
+alunos = []
+with open("alunos_notas.csv", newline='', encoding='utf-8') as csvfile:
+    leitor = csv.reader(csvfile)
+    next(leitor)  # pula o cabeçalho
+    for linha in leitor:
+        nome = linha[0]
+        notas = list(map(float, linha[1:]))
+        alunos.append(Aluno(nome, notas))
 def media(aluno):
     return f"{aluno.media():.1f}"
 def aprovado(aluno):
     return aluno.aprovado()
 def soma(soma,aluno2):
     return soma+aluno2.media()
+medias = []
+for c in alunos:
+    medias.append(media(c))
+aprovados = []
+for d in alunos:
+    if aprovado(d):
+        aprovados.append(d)
 print("Médias:",list(map(media,alunos)))
-print("Aprovados",list(filter(aprovado,alunos)))
+print("Aprovados:",list(filter(aprovado,alunos)))
 print(f"Média da turma: {(reduce(soma,alunos,0))/len(alunos):.1f}")
+print("Médias:",medias)
+print("Aprovados:",aprovados)
 #Questão2
 import random
 def generateMap(m: int, n: int, ground_water_ration = .2, water = '0', ground = '1' ):
@@ -76,17 +93,32 @@ if __name__ == '__main__':
                     explorar(map, a+1, b-1, ground, visitadas)
                     explorar(map, a+1, b, ground, visitadas)
                     explorar(map, a+1, b+1, ground, visitadas)
-    def contar(map, ground = 1):
+    def contar(map, ground = '1'):
         visitadas = set()
         c = 0
-        for a in range(len(map)):
-            for b in range(len(map[0])):
-                if map[a][b] == ground:
-                    if (a, b) not in visitadas:
-                        explorar(map, a, b, ground, visitadas)
-                        c = c + 1
-        return c                        
+        if type(map) is str:
+            m=[]
+            arquivo=open(map,"r", encoding="utf-8")
+            linha=arquivo.readline()
+            while linha!="":
+                if linha!="":
+                    l=[]
+                    for d in range(len(linha)-1):
+                        l.append(linha[d])
+                    m.append(l)
+                linha = arquivo.readline()
+            arquivo.close()
+            map=m
+        if type(map) is list:
+            for a in range(len(map)):
+                for b in range(len(map[0])):
+                    if map[a][b] == ground:
+                        if (a, b) not in visitadas:
+                            explorar(map, a, b, ground, visitadas)
+                            c = c + 1
+            return c                        
     print(contar(m1, ground = "X"))
+    print(contar('test_map.txt'))
 #Questão3
 if __name__ == '__main__':
     random.seed(10012)
@@ -110,38 +142,53 @@ if __name__ == '__main__':
                     visitadas, ilha, t = explorar(map, a+1, b, ground, visitadas, ilha, t)
                     visitadas, ilha, t = explorar(map, a+1, b+1, ground, visitadas, ilha, t)
         return visitadas, ilha, t
-    def contar(map, ground = 1):
+    def contar(map, ground = '1'):
         visitadas = set()
         c = 0
         tmin = 0
         tmax = 0
-        for a in range(len(map)):
-            for b in range(len(map[0])):
-                if map[a][b] == ground:
-                    if (a, b) not in visitadas:
-                        ilha = set()
-                        visitadas, ilha, t = explorar(map, a, b, ground, visitadas, ilha, 0)
-                        if t > tmax:
-                            tmax = t
-                            ilhamax = ilha
-                        if tmin == 0:
-                            tmin = t
-                            ilhamin = ilha
-                        if t < tmin:
-                            tmin = t
-                            ilhamin = ilha
-                        c = c + 1
-        xmin, ymin, xmax, ymax = 0, 0, 0, 0
-        for d in ilhamin:
-            xmin = xmin + d[0]
-            ymin = ymin + d[1]
-        for e in ilhamax:
-            xmax = xmax + e[0]
-            ymax = ymax + e[1]
-        cmin = (xmin/tmin,ymin/tmin)
-        cmax = (xmax/tmax,ymax/tmax)
-        return c, cmin, cmax
+        if type(map) is str:
+            m=[]
+            arquivo=open(map,"r", encoding="utf-8")
+            linha=arquivo.readline()
+            while linha!="":
+                if linha!="":
+                    l=[]
+                    for d in range(len(linha)-1):
+                        l.append(linha[d])
+                    m.append(l)
+                linha = arquivo.readline()
+            arquivo.close()
+            map=m
+        if type(map) is list:
+            for a in range(len(map)):
+                for b in range(len(map[0])):
+                    if map[a][b] == ground:
+                        if (a, b) not in visitadas:
+                            ilha = set()
+                            visitadas, ilha, t = explorar(map, a, b, ground, visitadas, ilha, 0)
+                            if t > tmax:
+                                tmax = t
+                                ilhamax = ilha
+                            if tmin == 0:
+                                tmin = t
+                                ilhamin = ilha
+                            if t < tmin:
+                                tmin = t
+                                ilhamin = ilha
+                            c = c + 1
+            xmin, ymin, xmax, ymax = 0, 0, 0, 0
+            for d in ilhamin:
+                xmin = xmin + d[0]
+                ymin = ymin + d[1]
+            for e in ilhamax:
+                xmax = xmax + e[0]
+                ymax = ymax + e[1]
+            cmin = (xmin/tmin,ymin/tmin)
+            cmax = (xmax/tmax,ymax/tmax)
+            return c, cmin, cmax
     print(contar(m1, ground = "X"))
+    print(contar('test_map.txt'))
 #Questão4
 if __name__ == '__main__':
     random.seed(10012)
@@ -149,40 +196,70 @@ if __name__ == '__main__':
     print_map(m1)
     m2 = generateMap(100, 120)
     save_map(m2, 'test_map.txt')
-    def lago(map, ground = 1):
+    def explorar(map, a, b, ground, visitadas):
+        if -1 < a < len(map) and -1 < b < len(map[0]):
+            if map[a][b] != ground:
+                if (a, b) not in visitadas:
+                    visitadas.add((a, b))
+                    explorar(map, a-1, b, ground, visitadas)
+                    explorar(map, a, b-1, ground, visitadas)
+                    explorar(map, a, b+1, ground, visitadas)
+                    explorar(map, a+1, b, ground, visitadas)
+    def lago(map, ground = '1'):
         visitadas = set()
-        for a in range(1, len(map)-1):
-            for b in range(1, len(map[0])-1):
-                if map[a][b] != ground:
-                    if (a, b) not in visitadas:
-                        visitadas.add((a, b))
-                        visitadas.add((a-1, b))
-                        visitadas.add((a, b-1))
-                        visitadas.add((a, b+1))
-                        visitadas.add((a+1, b))
-                        if map[a-1][b] == ground and map[a][b-1] == ground and map[a][b+1] == ground and map[a+1][b] == ground:
+        if type(map) is str:
+            m=[]
+            arquivo=open(map,"r", encoding="utf-8")
+            linha=arquivo.readline()
+            while linha!="":
+                if linha!="":
+                    l=[]
+                    for d in range(len(linha)-1):
+                        l.append(linha[d])
+                    m.append(l)
+                linha = arquivo.readline()
+            arquivo.close()
+            map=m
+        if type(map) is list:
+            for a in range(1, len(map)-1):
+                if map[a][0] != ground:
+                    if (a, 0) not in visitadas:
+                        explorar(map, a, 0, ground, visitadas)
+                if map[0][a] != ground:
+                    if (0, a) not in visitadas:
+                        explorar(map, 0, a, ground, visitadas)
+                if map[len(map)-1][a] != ground:
+                    if (len(map)-1, a) not in visitadas:
+                        explorar(map, len(map)-1, a, ground, visitadas)
+                if map[a][len(map[0])-1] != ground:
+                    if (a, len(map)-1) not in visitadas:
+                        explorar(map, a, len(map)-1, ground, visitadas)
+            for a in range(1, len(map)-1):
+                for b in range(1, len(map[0])-1):
+                    if map[a][b] != ground:
+                        if (a, b) not in visitadas:
                             return True
-        return False
+            return False
     print(lago(m1, ground = "X"))
+    #print(lago('test_map.txt'))
 #Questão5
 import numpy
-#numpy.array(object, dtype=None, *, copy=True, order='K', subok=False, ndmin=0, like=None)
-class ToroArray(numpy.array):
+class ToroArray(numpy.ndarray):
     """
-    Uma subclasse customizada de numpy.array representa um toro unidimensional.
+    Uma subclasse customizada de numpy.array representando um toro unidimensional.
     
-    Isso significa que qualquer valor inteiro pode ser usado como indice,
-    e a classe retorna o valor da sua posicao depois de calcular o modulo
-    do tamanho do array. Isso permite que o array se comporte como um circulo,
-    onde os indices negativos ou valores que ultrapassem o tamanho do array sao tratados
+    Isso significa que qualquer valor inteiro pode ser usado como índice,
+    e a classe retorna o valor da sua posição depois de calcular o módulo
+    do tamanho do array. Isso permite que o array se comporte como um círculo,
+    onde os índices negativos ou valores que ultrapassem o tamanho do array são tratados
     de forma apropriada.
       
-    Metodos:
+    Métodos:
         __new__(cls, input_array):
             Cria um novo toro de um array.
         
-        __init__(self, inputArray):
-            Inicializa o objeto calculando e guardando o modulo.
+        __getitem__(self, inputArray):
+            Calcula o valor da posição.
     """
 
     def __new__(cls, input_array):
@@ -198,61 +275,18 @@ class ToroArray(numpy.array):
         obj = numpy.asarray(input_array).view(cls)  # Convert the input array and create a view as this class
         return obj
 
-    def __init__(self):
+    def __getitem__(self, key):
         """
-        Inicializa o objeto calculando e guardando o modulo.
-        
+        Calcula o valor da posição.
+
         Parametros:
-            input_array (array-like): Array a ser convertido.
-        """
-        self.mod = numpy.prod(self.shape)  # Calculate and store the product of dimensions of the array
+            key (int): indice
 
-    def getDim(self):
+        Retorna:
+            valor correspondente
         """
-        Retrieves the calculated dimension of the array.
-        
-        Returns:
-            int: The calculated dimension of the array.
-        """
-        return self.dim
-
-    def __mul__(self, w):
-        """
-        Overrides the multiplication behavior for CustomArray instances.
-        
-        If w is a numpy array or CustomArray, this method checks if their shapes match.
-        If shapes match, element-wise multiplication is performed. If shapes do not match,
-        the input array w is adjusted to match the shape of this CustomArray, and then
-        element-wise multiplication is performed. If w is not a numpy array or CustomArray,
-        regular multiplication is performed.
-        
-        Parameters:
-            w (array-like): Input array or value to be multiplied with this CustomArray.
-        
-        Returns:
-            array-like: Result of element-wise multiplication or regular multiplication.
-        """
-        if type(w) in [numpy.ndarray, ToroArray]:  # Check if w is a numpy array or an instance of CustomArray
-            if self.shape == w.shape:  # Check if the shapes of the arrays match
-                return super().__mul__(w)  # If shapes match, perform element-wise multiplication
-            else:
-                tw = w.flatten()  # Flatten the input array w
-                if len(tw) < self.dim:  # If flattened array length is less than stored dimension
-                    ft = numpy.ones(self.dim)  # Create an array of ones with length equal to stored dimension
-                    ft[:len(tw)] = tw  # Copy values from flattened array to the front
-                    tw = ft
-                else:
-                    tw = tw[:self.dim]  # If flattened array length is greater, trim it
-                tw = tw.reshape(self.shape)  # Reshape tw to match the shape of the CustomArray
-                return super().__mul__(tw)  # Perform element-wise multiplication
-        return super().__mul__(w)  # If w is not a numpy array or CustomArray, perform regular multiplication
-#tr = ToroArray([10, 11, 12, 13, 14])
-#print(tr[6])
-#print(tr[-20])
-#11
-#10
-# Criando uma instância da classe personalizada
-v = ToroArray([[ 1, 2, 4], [2, 3, 4]])
-print(v.dim)
-print(v.shape)
-print(v*numpy.array([[3,2],[10,100]]))
+        key = key % self.size
+        return super().__getitem__(key)
+tr = ToroArray([10, 11, 12, 13, 14])
+print(tr[6])
+print(tr[-20])
