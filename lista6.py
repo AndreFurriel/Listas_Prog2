@@ -48,34 +48,30 @@ class My_Array(numpy.ndarray):
         return aux
     def __str__(self):
         return str(self[:self.sig].tolist())
+print("Questão 1")
 a = My_Array([])
 a = a.append(1)
-print(a.sig)
-print(a)
 a = a.append(2.1)
-print(a.sig)
-print(a)
 a = a.append(3.21)
 print(a.sig)
 print(a)
-"""
-Minha implementação do append trabalha com tipo fixo (float),
-sempre dobra o comprimento do array, enquanto no python esse valor varia,
-e retorna um novo array, enquanto o python altera o antigo.
-"""
+print()
+print("Minha implementação do append trabalha com tipo fixo (float).")
+print("Sempre dobra o comprimento do array, enquanto no python esse valor varia.")
+print("Retorna um novo array, enquanto o python altera o antigo.")
+print()
 #Questão2
-"""Explique o que a função find_nb faz, e analise qual a sua complexidade."""
-"""
-Encontra o ponto "idt" de um array "data", mais próximo do ponto "point"
-    Calcula a distancia entre os pontos do array "data" e do ponto "point"
-        Com subtração de arrays: O(n)
-    Cria um array "d" com as normas das diferenças entre os pontos do array "data" e o ponto "point"
-        Com linalg.norm: O(n)
-    Encontra o indice "idt" do ponto com diferença minima do array "d"
-        Com argmin: O(n)
-    Retorna a distância minima "d[idt]" e o indice "idt": O(1)
-    ComplexidadeTotal = O(n) + O(n) + O(n) + O(1) = O(3n + 1) = O(n)
-"""
+print("Questão 2")
+print('Encontra o ponto "idt" de um array "data", mais próximo do ponto "point"')
+print('    Calcula a distância entre os pontos do array "data" e do ponto "point"')
+print('        Com subtração de arrays: O(n)')
+print('    Cria um array "d" com as normas das diferenças entre os pontos do array "data" e o ponto "point"')
+print('        Com linalg.norm: O(n)')
+print('    Encontra o índice "idt" do ponto com diferença mínima do array "d"')
+print('        Com argmin: O(n)')
+print('    Retorna a distância mínima "d[idt]" e o índice "idt": O(1)')
+print('ComplexidadeTotal = O(n) + O(n) + O(n) + O(1) = O(3n + 1) = O(n)')
+print()
 from matplotlib import pyplot as plt
 import scipy as sp
 numpy.random.seed(1001)
@@ -93,7 +89,42 @@ point = numpy.array([8.5, 4.5])
 dd, idx = find_nb(data, point)
 print(f"O ponto mais proximo está a {dd:.2f} de distância, é o ponto ({data[idx,0]:.2f},{data[idx,1]:.2f})  no índice {idx}")
 #Questão3
-
+print()
+print("Questão 3")
+print("Para representar cada dígito, temos β - 1 opções, ou seja, precisamos do menor inteiro maior que log(β - 1) bits")
+print("Como temos p dígitos precisamos de p * log(β - 1) bits")
+print("Para reprentar a base, precisamos do menor inteiro maior do que log(β) bits")
+print("Para representar o expoente, precisamos saber qual entre e_min ou e_max tem o maior módulo")
+print("Para representar o sinal do número precisamos de 1 bit e para representar o sinal do expoente precisamos de 1 bit")
+print("Para representar o 0 precisamos de 1 bit")
+print("Precisamos portanto de:")
+print("p * ⌈log(β - 1)⌉ + ⌈log(β)⌉ + ⌈max(abs(log(e_min)), abs(log(e_max)))⌉ + 3")
+print()
 #Questão4
-
+e = 1
+s = 2
+while s != 1:    
+    e = e/2
+    s = 1 + e
+print("Questão 4")
+print(2*e)
+print()
 #Questão5
+e = 1
+s = 2 * 10**6
+while s != 10**6:    
+    e = e/2
+    s = 10**6 + e
+print("Questão 5")
+print(2*e)
+print()
+print("a)")
+print("Episilon de 10**6 é 6 ordens de magnitude maior do que epsilon de 1.")
+print("Que é a mesma relação entre 1 e 10**6.")
+print("b)")
+print("Porque o float tem um número fixo de casas alocadas para os dígitos significativos,")
+print("Ou seja, cada casa decimal a mais antes da virgula é uma casa a menos depois da virgula")
+print("c)")
+print("Em aplicações com números muito grandes ou muito pequenos,")
+print("Perdemos tanta precisão que os valores menores não alteram o valores maiores,")
+print("Como visto com o epsilon maquina, comparações falsas se tornam verdadeiras.")
