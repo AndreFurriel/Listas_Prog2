@@ -196,7 +196,7 @@ usando o Scipy.
 Compare a classe VandermondeMatrix com essa nova implementação fazendo um código que compare a velocidade da construção dos Polinômios.
 """
 import numpy as np
-import sympy
+import scipy
 
 class interpolater:
 
@@ -232,18 +232,14 @@ class LagrangePolinomial(interpolater):
             raise RuntimeError(f"Dimensions must be equal len(x) = {len(x)} != len(y) = {len(y)}")
         self.data = [x, y]
         self._degree = len(x) -1
-        self.x = scipy.
-        self._poly = 
-
-    def form(self):
-        s = 0
-        for j in range(self._degree):
-            m = 1
-            for i in range(self._degree):
-                x = sympy.symbols("x")
-                (x - self.data[0][i]) / (self.data[0][j] - self.data[0][i])
-                m = m *
-            s = s + self.data[1][j] *
+        self._poly = scipy.interpolate.lagrange(x, y)
+        print(self._poly[::-1])
+        
+    def evaluate(self, X):
+        r = 0.0
+        for i in self._poly.coef[::-1]:
+            r = i + r * X
+        return r
 
 def random_sample(intv, N):
     r = np.random.uniform(intv[0], intv[1], N-2)
@@ -262,12 +258,15 @@ if __name__ == '__main__':
     DataY = [-0.25991903,  0.04625002,  0.16592075,  0.13048074,  0.13902777, 0.2]
 
     Pvm = VandermondeMatrix(DataX, DataY)
+    Plp = LagrangePolinomial(DataX, DataY)
 
     X = np.linspace(min(DataX)-0.2, max(DataX)+0.2, 100)
-    Y = Pvm(X)
+    Yvm = Pvm(X)
+    Ylp = Plp(X)
 
     _, ax = plt.subplots(1)
-    ax.plot(X,Y)
+    ax.plot(X,Yvm)
+    ax.plot(X,Ylp)
     ax.axis('equal')
     ax.plot(DataX, DataY, 'o')
     plt.show()
